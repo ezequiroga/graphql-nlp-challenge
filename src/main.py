@@ -6,6 +6,9 @@ from fastapi.openapi.utils import get_openapi
 
 from .routers import graphql_router
 from .routers import npl_router
+from .config.envs import Envs
+
+Envs.load()
 
 app = FastAPI()
 
