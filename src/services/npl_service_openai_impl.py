@@ -12,7 +12,28 @@ class NplServiceOpenaiImpl(NplService):
     def answer(self, question) -> str:
         self.__sanity_check(question)
 
-        question_wrapper = """
+        question_wrapper = self.__wrapper_question_promp(question)
+
+        return self.__callOpenAIHelper(question_wrapper)
+        
+    def __sanity_check(self, question):
+        """
+        This function should be robust enough to check if the question is valid or not.
+        This is a naive implementation and should be improved.
+        """
+
+        if not question:
+            raise HTTPException(status_code=400, detail="Question is required")
+        
+        validate_question_promp = self.__wrapper_validate_question_promp(question)
+
+        answer = self.__callOpenAIHelper(validate_question_promp)
+
+        if answer.lower() != "yes":
+            raise HTTPException(status_code=400, detail="Invalid question")
+    
+    def __wrapper_question_promp(self, question):
+        return """
         Answer the following question using the data from the CSV file:
         {question}
 
@@ -25,23 +46,10 @@ class NplServiceOpenaiImpl(NplService):
         - the mapping provided,
         - use only the columns map in the mapping
         - using only the columns that are relevant to the question
-        """
+        """.format(question=question, mapping=Cons.COLUMN_MAPPING)
 
-        return self.__callOpenAIHelper(question_wrapper.format(
-            question=question, 
-            mapping=Cons.COLUMN_MAPPING
-        ))
-        
-    def __sanity_check(self, question):
-        """
-        This function should be robust enough to check if the question is valid or not.
-        This is a naive implementation and should be improved.
-        """
-
-        if not question:
-            raise HTTPException(status_code=400, detail="Question is required")
-        
-        validate_question_promp = """
+    def __wrapper_validate_question_promp(self, question):
+        return """
         Is the following question a valid one for consuming data from the CSV file: 
         {question}
 
@@ -54,16 +62,7 @@ class NplServiceOpenaiImpl(NplService):
         - the mapping provided,
         - use only the columns map in the mapping
         - using only the columns that are relevant to the question
-        """
-
-        answer = self.__callOpenAIHelper(validate_question_promp.format(
-            question=question, 
-            mapping=Cons.COLUMN_MAPPING
-        ))
-
-        if answer.lower() != "yes":
-            raise HTTPException(status_code=400, detail="Invalid question")
-
+        """.format(question=question, mapping=Cons.COLUMN_MAPPING)
         
     def __callOpenAIHelper(self, question):
         try:
