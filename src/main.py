@@ -5,6 +5,10 @@ from pydantic import BaseModel
 from fastapi.openapi.utils import get_openapi
 
 from .routers import graphql_router
+from .routers import npl_router
+from .config.envs import Envs
+
+Envs.load()
 
 app = FastAPI()
 
@@ -17,6 +21,7 @@ app.add_middleware(
 )
 
 app.include_router(graphql_router.graphql_app, prefix="/graphql")
+app.include_router(npl_router.router)
 
 class DocumentationResponse(BaseModel):
     documentation: dict
