@@ -2,7 +2,7 @@
 from fastapi import HTTPException
 from openai import OpenAIError
 
-from src.utils.cons import Cons
+from ..utils.cons import Cons
 from .npl_service import NplService
 from langchain_experimental.agents import create_csv_agent
 from langchain_openai import OpenAI
@@ -14,7 +14,7 @@ class NplServiceOpenaiImpl(NplService):
 
         question_wrapper = self.__wrapper_question_promp(question)
 
-        return self.__callOpenAIHelper(question_wrapper)
+        return self.__callOpenAIHelper(question_wrapper)['output']
         
     def __sanity_check(self, question):
         """
@@ -29,7 +29,7 @@ class NplServiceOpenaiImpl(NplService):
 
         answer = self.__callOpenAIHelper(validate_question_promp)
 
-        if answer.lower() != "yes":
+        if answer['output'].lower() != "yes":
             raise HTTPException(status_code=400, detail="Invalid question")
     
     def __wrapper_question_promp(self, question):
@@ -37,11 +37,15 @@ class NplServiceOpenaiImpl(NplService):
         Answer the following question using the data from the CSV file:
         {question}
 
-        You must use the following mapping for the columns:
+        You must use the following mapping for the columns. 
+        Bear in mind that the structure is 'column_name_in_csv: valid_column_value'.
+        You must check column names agains the 'valid_column_value' to answer the question.
+        Mapping:
         {mapping}
 
         Answer the question follwing theses rules:
-        - in a way that the user can understand, 
+        - aswer exactly the question,
+        - be concise and clear,
         - using the data from the CSV file, 
         - the mapping provided,
         - use only the columns map in the mapping
@@ -53,7 +57,10 @@ class NplServiceOpenaiImpl(NplService):
         Is the following question a valid one for consuming data from the CSV file: 
         {question}
 
-        You must use the following mapping for the columns:
+        You must use the following mapping for the columns. 
+        Bear in mind that the structure is 'column_name_in_csv: valid_column_value'.
+        You must check column names agains the 'valid_column_value' to answer the question.
+        Mapping:
         {mapping}
 
         Answer the question follwing theses rules:
@@ -73,6 +80,6 @@ class NplServiceOpenaiImpl(NplService):
                 allow_dangerous_code=True
             )
 
-            return agent.run(question)
+            return agent.invoke(question)
         except OpenAIError as e:
             raise HTTPException(status_code=400, detail=str(e))

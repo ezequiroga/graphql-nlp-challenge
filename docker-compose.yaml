@@ -1,0 +1,14 @@
+services:
+  data_api:
+    image: data_api:latest
+    container_name: data_api_container
+    build: 
+      context: ./src
+      dockerfile: Dockerfile
+    environment:
+      - CSV_FILE_PATH=/app/app/data.csv
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src/data.csv:/app/app/data.csv:ro
