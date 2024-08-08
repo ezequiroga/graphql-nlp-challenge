@@ -1,4 +1,5 @@
 
+import logging
 from fastapi import HTTPException
 from openai import OpenAIError
 
@@ -9,6 +10,10 @@ from langchain_openai import OpenAI
 from ..config.envs import Envs
 
 class NplServiceOpenaiImpl(NplService):
+
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
+
     def answer(self, question) -> str:
         self.__sanity_check(question)
 
@@ -82,4 +87,5 @@ class NplServiceOpenaiImpl(NplService):
 
             return agent.invoke(question)
         except OpenAIError as e:
+            self.logger.error(e)
             raise HTTPException(status_code=400, detail=str(e))
