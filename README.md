@@ -1,12 +1,12 @@
 # Python Code Challenge - GraphQL & NLP
 
-API with one service and two endpoints
+API with two service and three endpoints.
 
 ## Run in Docker
 
-The App service runs in a Docker container using Docker Compose. Thus, the first step is to install Docker locally.
+Both the App and the Docs services run in Docker containers using Docker Compose. Thus, the first step is to install Docker locally.
 
-To run the Docker Compose, you need to set the environment variable `OPENAI_API_KEY`. To do this, run:
+To run the Docker Compose, you need to set the environment variable `OPENAI_API_KEY` because it is needed by the App service. To do that, run:
 
 ```bash
 export OPENAI_API_KEY=your_openai_api_key
@@ -18,23 +18,13 @@ Finally, start the container running:
 docker compose up --build -d
 ```
 
-## Run locally
+Services' port:
+- The App service runs on port `8000`
+- The Docs service runs on port `8080`
 
-For development purpose, not only is the environment variable `OPENAI_API_KEY` needed but also the absolute path to the CSV file. This can be set using the `.env` file. To do this, create a copy of `.env.example` with the name `.env`:
+## App endpoints
 
-```bash
-cp .env.example .env
-```
-
-Then, set the variable properly: `CSV_FILE_PATH=/absolute/path/to/the/data.csv`
-
-Finally, to start the app run:
-
-```bash
-python3 -m src.main
-```
-
-## App services
+The App service runs on port `8000`
 
 The App service has two endpoints:
 - /graphql
@@ -80,3 +70,25 @@ For instanse:
 The endpoints respond with plain text.
 
 The services use an agent for consuming the OpenAI API.
+
+### Docs endpoint
+
+The App service runs on port `8080`.
+
+The endpoint for access the Swagger UI es `/docs`
+
+## Run App locally
+
+For development purpose, the App not only needs the environment variable `OPENAI_API_KEY` but also the absolute path to the CSV file. This can be set using the `.env` file. To do this, create a copy of `.env.example` with the name `.env`:
+
+```bash
+cp .env.example .env
+```
+
+Then, set the variable properly: `CSV_FILE_PATH=/absolute/path/to/the/data.csv`
+
+Finally, to start the app run:
+
+```bash
+python3 -m src.main
+```
