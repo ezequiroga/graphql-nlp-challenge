@@ -1,0 +1,10 @@
+pandas
+fastapi
+strawberry-graphql
+pydantic
+uvicorn
+langchain
+langchain_experimental
+langchain-openai
+python-dotenv
+tabulate

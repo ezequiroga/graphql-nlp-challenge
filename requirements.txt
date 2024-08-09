@@ -1,5 +1,0 @@
-pandas
-fastapi
-strawberry-graphql
-pydantic
-uvicorn
