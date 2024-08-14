@@ -8,10 +8,13 @@ services:
     environment:
       - CSV_FILE_PATH=/app/app/data.csv
       - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OAUTH_SERVICE_URL=http://host.docker.internal:9090
     ports:
       - "8000:8000"
     volumes:
       - ./src/data.csv:/app/app/data.csv:ro
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
   
   docs:
     image: docs:latest
@@ -21,8 +24,6 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
-    environment:
-      - API_URL=http://service_api:8000/docs
 
   auth_service:
     image: auth_service:latest
@@ -31,4 +32,4 @@ services:
       context: ./auth_service
       dockerfile: Dockerfile
     ports:
-      - "9090:8000"
+      - "9090:8001"

@@ -17,6 +17,13 @@ class Envs:
         if csv_file_path is None or csv_file_path == "":
             print("CSV_FILE_PATH is not set")
             exit(1)
+        
+        oauth_service_url = os.getenv("OAUTH_SERVICE_URL")
+
+        if oauth_service_url is None or oauth_service_url == "":
+            print("OAUTH_SERVICE_URL is not set")
+            exit(1)
+
 
     @staticmethod
     def get_csv_file_path():
@@ -25,3 +32,7 @@ class Envs:
     @staticmethod
     def get_openai_api_key():
         return os.getenv("OPENAI_API_KEY")
+    
+    @staticmethod
+    def get_oauth_service_url():
+        return os.getenv("OAUTH_SERVICE_URL")
