@@ -7,7 +7,7 @@ Content:
 - [Endpoints](#endpoints)
   - [/graphql](#graphql)
   - [/prompt](#prompt)
-- [Docs](#docs)
+- [Docs](#documentation)
 - [Run App service locally](#run-app-locally)
 - [oAuth authentication](#oauth-authentication)
 
@@ -31,7 +31,7 @@ docker compose up --build -d
 
 The services' port are:
 - The App service runs on port `8000`
-- The Docs service runs on port `8080`
+- The Documentation service runs on port `3000`
 - The Auth service runs on port `9090`
 
 ## Endpoints
@@ -83,11 +83,11 @@ The endpoints respond with plain text.
 
 The services use an agent for consuming the OpenAI API.
 
-### Docs
+### Documentation
 
-The Doc service runs on port `8080`.
+The Documentation service runs on port `3000`.
 
-The endpoint for access the Swagger UI es `/docs`
+The endpoint for access the Swagger UI es `/api-docs`
 
 ## Run App locally
 

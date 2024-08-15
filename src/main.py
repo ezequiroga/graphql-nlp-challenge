@@ -15,7 +15,9 @@ setup_logging()
 app = FastAPI(
     title="API Products Documentation",
     description="This api allow you to interact to get information about products using GraphQL and NLP. The documentation for GraphQL can be found [/graphql-docs](/graphql-docs).",
-    version="1.0.0"
+    version="1.0.0",
+    docs_url=None,
+    redoc_url=None
     )
 
 app.add_middleware(
@@ -29,18 +31,6 @@ app.add_middleware(
 app.include_router(graphql_router.graphql_app, prefix="/graphql")
 app.include_router(graphql_router.router)
 app.include_router(npl_router.router)
-
-class DocumentationResponse(BaseModel):
-    documentation: dict
-
-@app.middleware("http")
-async def restrict_docs_access(request: Request, call_next):
-    if request.url.path.startswith("/docs") or request.url.path.startswith("/graphql-docs"):
-        internal_access_header = request.headers.get("X-Internal-Access")
-        if internal_access_header != "allow-docs-access":
-            return JSONResponse(status_code=status.HTTP_403_FORBIDDEN, content={"detail": "Access forbidden"})
-    response = await call_next(request)
-    return response
 
 if __name__ == "__main__":
     import uvicorn

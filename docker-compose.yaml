@@ -15,15 +15,6 @@ services:
       - ./src/data.csv:/app/app/data.csv:ro
     extra_hosts:
       - "host.docker.internal:host-gateway"
-  
-  docs:
-    image: docs:latest
-    container_name: docs_container
-    build: 
-      context: ./docs
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
 
   auth_service:
     image: auth_service:latest
@@ -33,3 +24,12 @@ services:
       dockerfile: Dockerfile
     ports:
       - "9090:8001"
+
+  documentation:
+    image: api_docs:latest
+    container_name: api_docs_container
+    build: 
+      context: ./api_docs
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
