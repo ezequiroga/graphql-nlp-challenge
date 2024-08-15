@@ -9,7 +9,9 @@ setup_logging()
 app = FastAPI(
     title="API for login and token validation",
     description="This API allows you to login and validate tokens",
-    version="1.0.0"
+    version="1.0.0",
+    docs_url=None,
+    redoc_url=None
     )
 
 app.add_middleware(

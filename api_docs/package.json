@@ -1,0 +1,13 @@
+{
+    "name": "my-api",
+    "version": "1.0.0",
+    "description": "API - GraphQL & NPL",
+    "main": "app.js",
+    "scripts": {
+      "start": "node app.js"
+    },
+    "dependencies": {
+      "express": "^4.18.2",
+      "swagger-ui-express": "^4.6.1"
+    }
+  }
