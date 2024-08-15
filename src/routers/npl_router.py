@@ -1,7 +1,8 @@
 import logging
-from fastapi import APIRouter, Body, HTTPException
+from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.responses import PlainTextResponse
 
+from ..config.auth import get_current_user
 from .docs.prompt_responses_examples import answer_question_responses
 from ..models.prompt import Prompt
 from ..services.npl_service import NplService
@@ -18,7 +19,8 @@ router = APIRouter()
              description="This endpoint allow the user to talk with data by asking information in natural language.",
              responses=answer_question_responses
              )
-async def answer_question(body: Prompt) -> str:
+async def answer_question(body: Prompt, user: dict = Depends(get_current_user)) -> str:
+    # log user activity
     service: NplService = NplServiceOpenaiImpl()
     try:
         return service.answer(question=body.prompt)

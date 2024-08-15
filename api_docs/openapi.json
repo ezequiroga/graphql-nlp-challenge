@@ -1,0 +1,219 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API - GraphQL & NPL",
+    "description": "Python code challenge. This API allows you to get information about products using GraphQL and Natural Language. Both /graphql and /prompt are secured by oAuth. Follow the Authentication section for getting a valid JWT to authenticate the endpoints.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Data API",
+      "description": "API for getting information about products",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "http://swagger.io"
+      }
+    }
+  ],
+  "paths": {
+    "/graphql": {
+      "post": {
+        "tags": [
+          "Data API"
+        ],
+        "summary": "Query product information from the database using GraphQL",
+        "description": "Request specific fields and related data in a single query",
+        "operationId": "queryGraphql",
+        "requestBody": {
+          "description": "Specific fields to retrieve. Use the action `getItems` to retrieve all the data.<br/><br/>query&nbsp;{<br/>\n  &nbsp;&nbsp;getItems {<br/>\n    &nbsp;&nbsp;&nbsp;&nbsp;date<br/>\n    &nbsp;&nbsp;&nbsp;&nbsp;clientId<br/>\n    &nbsp;&nbsp;&nbsp;&nbsp;sku<br/>\n    &nbsp;&nbsp;&nbsp;&nbsp;productCode<br/>\n    &nbsp;&nbsp;&nbsp;&nbsp;productName<br/>\n    &nbsp;&nbsp;&nbsp;&nbsp;brand<br/>\n    &nbsp;&nbsp;&nbsp;&nbsp;productCategory<br/>\n    &nbsp;&nbsp;&nbsp;&nbsp;mainProductCategory<br/>\n    &nbsp;&nbsp;&nbsp;&nbsp;productQuantity<br/>\n    &nbsp;&nbsp;&nbsp;&nbsp;productDetailQuantity<br/>\n    &nbsp;&nbsp;&nbsp;&nbsp;productIncomeAmount<br/>\n    &nbsp;&nbsp;&nbsp;&nbsp;addedToCartQuantity<br/>\n    &nbsp;&nbsp;&nbsp;&nbsp;removedFromCartQuantity<br/>\n    &nbsp;&nbsp;&nbsp;&nbsp;flagPipol<br/>\n  &nbsp;&nbsp;}<br/>\n}<br/>\n",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Query"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation. It shows the data associated to the specified fields.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Query"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ]
+      }
+    },
+    "/prompt": {
+      "post": {
+        "tags": [
+          "Data API"
+        ],
+        "summary": "Get products information using natural language",
+        "description": "Ask about your data using natural language",
+        "operationId": "askInformation",
+        "requestBody": {
+          "description": "Question",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Prompt"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "text/plain; charset=utf-8": {
+                "schema": {
+                  "$ref": "#/components/schemas/PromptAnswer"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "jwt": []
+          }
+        ]
+      }
+    },
+    "/token": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Obtain JWT Token",
+        "description": "Use the client username and password to get a JWT token.",
+        "operationId": "getToken",
+        "requestBody": {
+          "description": "User credentials",
+          "content": {
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password"
+                ]
+              }
+            }
+          },
+          "required": true
+        },
+        "servers": [
+          {
+            "url": "http://localhost:9090"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "text/plain; charset=utf-8": {
+                "schema": {
+                  "type": "object",
+                  "description": "JWT token",
+                  "properties": {
+                    "token": {
+                      "type": "string",
+                      "description": "JWT"
+                    },
+                    "token_type":{ 
+                      "type": "string",
+                      "description": "Type of token"
+                    }
+                  },
+                  "example": {
+                    "access_token": "xxxxx.yyyyy.zzzzz",
+                    "token_type": "bearer"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Query": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The specific fields to retrieve",
+            "example": "{\n  getItems {\n    date\n    clientId\n    sku\n    productCode\n    productName\n    brand\n    productCategory\n    mainProductCategory\n    productQuantity\n    productDetailQuantity\n    productIncomeAmount\n    addedToCartQuantity\n    removedFromCartQuantity\n    flagPipol\n  }\n}"
+          }
+        }
+      },
+      "Prompt": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "example": "how many sku are there?"
+          }
+        }
+      },
+      "PromptAnswer": {
+        "type": "string",
+        "example": "There are 4576 SKUs"
+      }
+    },
+    "securitySchemes": {
+      "jwt": {
+        "type": "http",
+        "description": "Use the JWT obteined from the /token endpoint",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
